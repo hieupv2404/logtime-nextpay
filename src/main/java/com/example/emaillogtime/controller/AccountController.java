@@ -49,7 +49,7 @@ public class AccountController {
     public String greeting() {
         return "greeting ok";
     }
-
+//deg
     @PutMapping("/{id}")
     public ResponseEntity<ResponseObject> updateEntriesTimeDTO(@Valid @PathVariable(name = "id") Long entriesTimeDtoId,
                                                                @RequestBody(required = false) EntriesTimeDTO entriesTimeDTO) {
