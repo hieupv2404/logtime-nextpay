@@ -45,8 +45,6 @@ public class AccountController {
 //        return ResponseEntity.status(HttpStatus.OK).body(entriesTimeDtoRepository.save(entriesTimeDTO));
 //    }
 
-
-
     @GetMapping("/get")
     public String greeting() {
         return "greeting ok";
