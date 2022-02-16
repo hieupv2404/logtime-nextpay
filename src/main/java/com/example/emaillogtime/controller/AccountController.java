@@ -45,10 +45,7 @@ public class AccountController {
 //        return ResponseEntity.status(HttpStatus.OK).body(entriesTimeDtoRepository.save(entriesTimeDTO));
 //    }
 
-    //    @PostMapping( )
-//    public ResponseEntity<EntriesTimeDTO> createEntriesTimeDTO (@RequestBody EntriesTimeDTO entriesTimeDTO) {
-//        return ResponseEntity.status(HttpStatus.OK).body(entriesTimeDtoRepository.save(entriesTimeDTO));
-//    }
+
 
     @GetMapping("/get")
     public String greeting() {
