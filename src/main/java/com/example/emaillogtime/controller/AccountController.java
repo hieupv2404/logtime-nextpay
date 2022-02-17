@@ -42,7 +42,7 @@ public class AccountController {
 
 //    @PostMapping( )ahihihikkk ahihi
 //    public ResponseEntity<EntriesTimeDTO> createEntriesTimeDTO (@RequestBody EntriesTimeDTO entriesTimeDTO) {
-//        return ResponseEntity.status(HttpStatus.OK).body(entriesTimeDtoRepository.save(entriesTimeDTO));
+//        return ResponseEntity.status(HttpStatus.OK).body(entriesTimeDtoRepository.save(entriesTimeDTO));123
 //    }
 
     @GetMapping("/get")
