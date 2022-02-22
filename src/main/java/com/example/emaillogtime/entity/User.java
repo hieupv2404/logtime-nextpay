@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Data
@@ -16,7 +18,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "userId")
-    private Long userId;
+    private String userId;
+    @NotBlank(message = "username khong duoc de trong,co chua khoang trang")
+    @Email(message = "email khong hop le")
     @Column(name = "mail_notification")
     private String mail;
 

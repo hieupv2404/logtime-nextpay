@@ -2,11 +2,14 @@ package com.example.emaillogtime.controller;
 
 import com.example.emaillogtime.dto.*;
 import com.example.emaillogtime.entity.Account;
+import com.example.emaillogtime.entity.User;
 import com.example.emaillogtime.reposiotry.AccountRepository;
 import com.example.emaillogtime.reposiotry.EntriesTimeDtoRepository;
+import com.example.emaillogtime.reposiotry.UserRepository;
 import com.example.emaillogtime.security.jwt.JwtProvider;
 import com.example.emaillogtime.service.AccountService;
 import com.example.emaillogtime.service.MailService;
+import com.example.emaillogtime.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +22,14 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
 @ComponentScan
 @RestController
 @RequestMapping(value = "account/v1")
+@CrossOrigin(origins = "*", maxAge = 3600, allowedHeaders = "*")
 @Slf4j
 public class AccountController {
     @Autowired
@@ -40,17 +45,35 @@ public class AccountController {
     @Autowired
     private JwtProvider jwtProvider;
 
-//    @PostMapping( )ahihihikkk ahihi
-//    public ResponseEntity<EntriesTimeDTO> createEntriesTimeDTO (@RequestBody EntriesTimeDTO entriesTimeDTO) {
-//        return ResponseEntity.status(HttpStatus.OK).body(entriesTimeDtoRepository.save(entriesTimeDTO));123
-//    }
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private UserService userService;
 
-    @GetMapping("/get")
-    public String greeting() {
-        return "greeting ok";
+//    @PostMapping()
+//    public ResponseEntity<EntriesTimeDTO> createEntriesTimeDTO (@RequestBody EntriesTimeDTO entriesTimeDTO) {
+//        return ResponseEntity.status(HttpStatus.OK).body(entriesTimeDtoRepository.save(entriesTimeDTO));
+//    }
+//abc
+    @PostMapping("/create-user")
+    public ResponseEntity<ResponseObject> createUser(@Valid @RequestBody UserDTO userDTO) {
+        Optional<User> user = userRepository.findByMail(userDTO.getMail());
+        if (user.isPresent()) {
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new
+                    ResponseObject("False","username da ton tai",""));
+        } else {
+            return ResponseEntity.status(HttpStatus.CREATED).body(new
+                    ResponseObject("OK","them user thanh cong",userService.save(userDTO)));
+        }
+
     }
 
-    @PutMapping("/{id}")
+    @GetMapping("/get")
+    public List<Account> greeting() {
+        return accountRepository.findAll();
+    }
+
+    @PostMapping("/{id}")
     public ResponseEntity<ResponseObject> updateEntriesTimeDTO(@Valid @PathVariable(name = "id") Long entriesTimeDtoId,
                                                                @RequestBody(required = false) EntriesTimeDTO entriesTimeDTO) {
         Optional<EntriesTimeDTO> entriesTimeDTO1 = entriesTimeDtoRepository.findById(entriesTimeDtoId);
@@ -68,7 +91,7 @@ public class AccountController {
     ResponseEntity<ResponseObject> createUser(@Valid @RequestBody Account account) {
         Optional<Account> account1 = accountRepository.findAccountByUsername(account.getUsername());
         if (account1.isPresent()) {
-            return ResponseEntity.status(HttpStatus.OK).body(new
+            return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body(new
                     ResponseObject("False", "Username already", "",""));
         } else {
             String password = account.getPassword().trim();
@@ -79,7 +102,7 @@ public class AccountController {
         }
     }
 
-    @PutMapping("/change-password")
+    @PostMapping("/change-password")
     ResponseEntity<ResponseObject> changePassword(@Valid @RequestBody AccountChangePassword accountChangePassword) {
         Optional<Account> account = accountRepository.findById(accountChangePassword.getId());
         if (account.isPresent()) {
@@ -132,7 +155,7 @@ public class AccountController {
         if (accountOptional.isPresent()) {
 //           if (accountOptional.get().getPassword().equals(account.getPassword())){
             if (bCryptPasswordEncoder.matches(account.getPassword(), accountOptional.get().getPassword())) {
-                String token = jwtProvider.generateToken(account.getUsername());
+                String token = jwtProvider.generateToken(account.getUsername(), accountOptional.get().getId());
                 return ResponseEntity.status(HttpStatus.OK).body(
                         new ResponseObject("OK", "login successfully",  token, accountOptional));
             } else {
